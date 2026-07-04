@@ -98,7 +98,9 @@ Aplikasi ini menyediakan 4 metode enkripsi hibrida. Enkripsi hibrida menggabungk
 ```text
 enkripsi-dekripsi-keamanan-siber/
 │
-├── main.py              # Titik masuk aplikasi (entrypoint), penangan dependensi, dan inisialisasi GUI
+├── main.py              # Aplikasi Utama (All-in-One: Kunci, Enkripsi, & Dekripsi)
+├── encryptor.py         # Aplikasi Khusus Pengirim (Hanya pembuatan kunci & Enkripsi)
+├── decryptor.py         # Aplikasi Khusus Penerima (Hanya pembuatan kunci & Dekripsi)
 ├── README.md            # Dokumentasi proyek
 └── src/                 # Folder sumber kode program
     ├── __init__.py      # Menandai src sebagai Python package
@@ -121,12 +123,25 @@ enkripsi-dekripsi-keamanan-siber/
 
 Buka terminal di direktori proyek ini dan jalankan perintah:
 
+### 1. Aplikasi Utama (All-in-One)
 ```powershell
-# Menggunakan Python Launcher (Windows)
 py main.py
-
-# Atau menggunakan perintah Python standar
+# atau
 python main.py
+```
+
+### 2. Aplikasi Khusus Enkripsi (Encryptor Only)
+```powershell
+py encryptor.py
+# atau
+python encryptor.py
+```
+
+### 3. Aplikasi Khusus Dekripsi (Decryptor Only)
+```powershell
+py decryptor.py
+# atau
+python decryptor.py
 ```
 
 ---

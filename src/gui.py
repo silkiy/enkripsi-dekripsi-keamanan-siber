@@ -17,10 +17,20 @@ from src.utils import calculate_hash
 
 
 class E2EEApp:
-    def __init__(self, root):
+    def __init__(self, root, mode="all"):
         self.root = root
-        self.root.title("E2EE Cryptography Tool (X25519 / RSA)")
-        self.root.geometry("520x420")
+        self.mode = mode
+        
+        if mode == "encrypt":
+            self.root.title("E2EE Encryptor Tool (X25519 / RSA)")
+            self.root.geometry("520x300")
+        elif mode == "decrypt":
+            self.root.title("E2EE Decryptor Tool (X25519 / RSA)")
+            self.root.geometry("520x300")
+        else:
+            self.root.title("E2EE Cryptography Tool (X25519 / RSA)")
+            self.root.geometry("520x420")
+            
         self.root.resizable(False, False)
         
         # Style layout
@@ -28,7 +38,7 @@ class E2EEApp:
         
         title_label = tk.Label(
             root, 
-            text="Aplikasi End-to-End Encryption", 
+            text="Aplikasi End-to-End Encryption" if mode == "all" else ("E2EE Encryptor Tool" if mode == "encrypt" else "E2EE Decryptor Tool"), 
             font=("Arial", 16, "bold"), 
             bg="#f4f6f9", 
             fg="#2c3e50"
@@ -37,7 +47,9 @@ class E2EEApp:
         
         subtitle_label = tk.Label(
             root, 
-            text="Multi-Metode: X25519 & RSA dengan AES-GCM / ChaCha20 / AES-CBC", 
+            text="Multi-Metode: X25519 & RSA dengan AES-GCM / ChaCha20 / AES-CBC" if mode == "all" else 
+            ("Enkripsi Pesan & Berkas menggunakan Kunci Publik Penerima" if mode == "encrypt" else 
+             "Dekripsi Pesan & Berkas menggunakan Kunci Privat Anda"),
             font=("Arial", 9, "italic"), 
             bg="#f4f6f9", 
             fg="#7f8c8d"
@@ -46,77 +58,66 @@ class E2EEApp:
 
         # Frame Tombol Utama
         btn_frame = tk.Frame(root, bg="#f4f6f9")
-        btn_frame.pack(pady=20)
+        btn_frame.pack(pady=10)
         
-        # 1. Kunci Manajemen
-        key_btn = tk.Button(
-            btn_frame, 
-            text="1. Hasilkan Pasangan Kunci Baru (Keys)", 
-            width=45, 
-            height=2, 
-            font=("Arial", 10),
-            bg="#3498db", 
-            fg="white", 
-            activebackground="#2980b9",
-            command=self.gui_generate_keys
-        )
-        key_btn.grid(row=0, column=0, pady=8)
+        buttons_info = []
         
-        # 2. Pesan Enkripsi
-        enc_msg_btn = tk.Button(
-            btn_frame, 
-            text="2. Enkripsi Pesan Teks (Encrypt Message)", 
-            width=45, 
-            height=2, 
-            font=("Arial", 10),
-            bg="#2ecc71", 
-            fg="white", 
-            activebackground="#27ae60",
-            command=self.gui_encrypt_message
-        )
-        enc_msg_btn.grid(row=1, column=0, pady=8)
+        # 1. Kunci Manajemen (Selalu ada)
+        buttons_info.append({
+            "text": "1. Hasilkan Pasangan Kunci Baru (Keys)",
+            "bg": "#3498db",
+            "active": "#2980b9",
+            "cmd": self.gui_generate_keys
+        })
         
-        # 3. Pesan Dekripsi
-        dec_msg_btn = tk.Button(
-            btn_frame, 
-            text="3. Dekripsi Pesan Teks (Decrypt Message)", 
-            width=45, 
-            height=2, 
-            font=("Arial", 10),
-            bg="#e67e22", 
-            fg="white", 
-            activebackground="#d35400",
-            command=self.gui_decrypt_message
-        )
-        dec_msg_btn.grid(row=2, column=0, pady=8)
-        
-        # 4. File Enkripsi
-        enc_file_btn = tk.Button(
-            btn_frame, 
-            text="4. Enkripsi Berkas / File (Encrypt File)", 
-            width=45, 
-            height=2, 
-            font=("Arial", 10),
-            bg="#9b59b6", 
-            fg="white", 
-            activebackground="#8e44ad",
-            command=self.gui_encrypt_file
-        )
-        enc_file_btn.grid(row=3, column=0, pady=8)
-        
-        # 5. File Dekripsi
-        dec_file_btn = tk.Button(
-            btn_frame, 
-            text="5. Dekripsi Berkas / File (Decrypt File)", 
-            width=45, 
-            height=2, 
-            font=("Arial", 10),
-            bg="#34495e", 
-            fg="white", 
-            activebackground="#2c3e50",
-            command=self.gui_decrypt_file
-        )
-        dec_file_btn.grid(row=4, column=0, pady=8)
+        if mode in ("all", "encrypt"):
+            buttons_info.append({
+                "text": "2. Enkripsi Pesan Teks (Encrypt Message)",
+                "bg": "#2ecc71",
+                "active": "#27ae60",
+                "cmd": self.gui_encrypt_message
+            })
+            
+        if mode in ("all", "decrypt"):
+            num = "2" if mode == "decrypt" else "3"
+            buttons_info.append({
+                "text": f"{num}. Dekripsi Pesan Teks (Decrypt Message)",
+                "bg": "#e67e22",
+                "active": "#d35400",
+                "cmd": self.gui_decrypt_message
+            })
+            
+        if mode in ("all", "encrypt"):
+            num = "3" if mode == "encrypt" else "4"
+            buttons_info.append({
+                "text": f"{num}. Enkripsi Berkas / File (Encrypt File)",
+                "bg": "#9b59b6",
+                "active": "#8e44ad",
+                "cmd": self.gui_encrypt_file
+            })
+            
+        if mode in ("all", "decrypt"):
+            num = "3" if mode == "decrypt" else "5"
+            buttons_info.append({
+                "text": f"{num}. Dekripsi Berkas / File (Decrypt File)",
+                "bg": "#34495e",
+                "active": "#2c3e50",
+                "cmd": self.gui_decrypt_file
+            })
+            
+        for idx, btn_data in enumerate(buttons_info):
+            btn = tk.Button(
+                btn_frame, 
+                text=btn_data["text"], 
+                width=45, 
+                height=2, 
+                font=("Arial", 10),
+                bg=btn_data["bg"], 
+                fg="white", 
+                activebackground=btn_data["active"],
+                command=btn_data["cmd"]
+            )
+            btn.grid(row=idx, column=0, pady=8)
 
     def gui_generate_keys(self):
         # Window pop-up pilihan tipe kunci
