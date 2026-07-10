@@ -2,21 +2,22 @@ import os
 import sys
 import subprocess
 
-# Auto-install library cryptography jika belum terpasang (PEP 668 bypass included)
-try:
-    import cryptography
-except ImportError:
-    print("Modul 'cryptography' tidak ditemukan. Menginstal...")
+# Auto-install library cryptography & customtkinter jika belum terpasang (PEP 668 bypass included)
+for lib in ("cryptography", "customtkinter"):
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "cryptography"])
-    except Exception:
+        __import__(lib)
+    except ImportError:
+        print(f"Modul '{lib}' tidak ditemukan. Menginstal...")
         try:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "cryptography", "--break-system-packages"])
-        except Exception as e:
-            print(f"Gagal memasang library: {e}")
-            sys.exit(1)
+            subprocess.check_call([sys.executable, "-m", "pip", "install", lib])
+        except Exception:
+            try:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", lib, "--break-system-packages"])
+            except Exception as e:
+                print(f"Gagal memasang library {lib}: {e}")
+                sys.exit(1)
 
-import tkinter as tk
+import customtkinter as ctk
 from src.gui import E2EEApp
 
 if __name__ == "__main__":
@@ -24,6 +25,6 @@ if __name__ == "__main__":
     if os.environ.get("HEADLESS_TEST") == "1":
         print("[INFO] Mode pengujian headless aktif. GUI tidak diluncurkan.")
     else:
-        root = tk.Tk()
+        root = ctk.CTk()
         app = E2EEApp(root)
         root.mainloop()
