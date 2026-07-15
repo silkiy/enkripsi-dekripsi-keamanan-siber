@@ -1871,9 +1871,9 @@ class E2EEApp:
         def worker():
             try:
                 result = target_func()
-                self.root.after(0, lambda: self.finish_task(True, result, on_success_func, on_error_func))
+                self.root.after(0, lambda r=result: self.finish_task(True, r, on_success_func, on_error_func))
             except Exception as e:
-                self.root.after(0, lambda: self.finish_task(False, e, on_success_func, on_error_func))
+                self.root.after(0, lambda err=e: self.finish_task(False, err, on_success_func, on_error_func))
                 
         thread = threading.Thread(target=worker, daemon=True)
         thread.start()
