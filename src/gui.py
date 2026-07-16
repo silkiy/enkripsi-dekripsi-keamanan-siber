@@ -18,7 +18,7 @@ from src.crypto import (
 from src.utils import calculate_hash
 
 # Inisialisasi konfigurasi dasar CustomTkinter
-ctk.set_appearance_mode("Dark")
+ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("blue")
 
 # ==========================================
@@ -26,23 +26,23 @@ ctk.set_default_color_theme("blue")
 # ==========================================
 class AppTheme:
     # Warna
-    BG_PRIMARY = "#090d16"          # Slate 950 (Latar belakang utama)
-    BG_CARD = "#1e293b"             # Slate 800 (Latar Panel/Card)
-    BORDER_COLOR = "#334155"        # Slate 700 (Garis batas/Border)
-    TEXT_MAIN = "#f8fafc"           # Slate 50 (Teks Utama)
-    TEXT_MUTED = "#94a3b8"          # Slate 400 (Teks Redup/Keterangan)
-    ACCENT = "#6366f1"              # Indigo 500 (Aksen Utama)
-    ACCENT_HOVER = "#4f46e5"        # Indigo 600 (Aksen Hover)
-    COLOR_TEAL = "#14b8a6"          # Teal 500 (Aksen Sukses/Info)
-    COLOR_TEAL_HOVER = "#0d9488"    # Teal 600
-    COLOR_EMERALD = "#10b981"       # Emerald 500 (Enkripsi)
-    COLOR_EMERALD_HOVER = "#059669" # Emerald 600
-    COLOR_AMBER = "#f59e0b"         # Amber 500 (Dekripsi)
-    COLOR_AMBER_HOVER = "#d97706"   # Amber 600
-    COLOR_RED = "#ef4444"           # Red 500 (Error/Peringatan)
-    COLOR_VIOLET = "#8b5cf6"        # Violet 500
-    COLOR_BLUE = "#3b82f6"          # Blue 500
-    COLOR_SLATE = "#64748b"         # Slate 500
+    BG_PRIMARY = "#f8fafc"          # Slate 50 (Latar belakang utama)
+    BG_CARD = "#ffffff"             # White (Latar Panel/Card)
+    BORDER_COLOR = "#e2e8f0"        # Slate 200 (Garis batas/Border)
+    TEXT_MAIN = "#0f172a"           # Slate 900 (Teks Utama)
+    TEXT_MUTED = "#64748b"          # Slate 500 (Teks Redup/Keterangan)
+    ACCENT = "#4f46e5"              # Indigo 600 (Aksen Utama)
+    ACCENT_HOVER = "#4338ca"        # Indigo 700 (Aksen Hover)
+    COLOR_TEAL = "#0d9488"          # Teal 600 (Aksen Sukses/Info)
+    COLOR_TEAL_HOVER = "#0f766e"    # Teal 700
+    COLOR_EMERALD = "#059669"       # Emerald 600 (Enkripsi)
+    COLOR_EMERALD_HOVER = "#047857" # Emerald 700
+    COLOR_AMBER = "#d97706"         # Amber 600 (Dekripsi)
+    COLOR_AMBER_HOVER = "#b45309"   # Amber 700
+    COLOR_RED = "#e11d48"           # Red 600 (Error/Peringatan)
+    COLOR_VIOLET = "#7c3aed"        # Violet 600
+    COLOR_BLUE = "#2563eb"          # Blue 600
+    COLOR_SLATE = "#475569"         # Slate 600
     
     # Grid/Window Dimensions
     WINDOW_WIDTH = 1000
@@ -89,7 +89,7 @@ class E2EEApp:
         self.is_processing = False
         
         # Inisialisasi penampilan CustomTkinter
-        ctk.set_appearance_mode("Dark")
+        ctk.set_appearance_mode("Light")
         ctk.set_default_color_theme("blue")
         
         # Penentuan Judul & Tampilan Awal Berdasarkan Mode
@@ -699,8 +699,22 @@ class E2EEApp:
         self.enc_msg_input.bind("<KeyRelease>", self.on_encrypt_text_change)
         self.set_placeholder(self.enc_msg_input, "Tempel atau ketik pesan di sini...")
         
-        self.enc_char_count_lbl = ctk.CTkLabel(msg_card, text="Karakter: 0", text_color=AppTheme.TEXT_MUTED, font=AppTheme.FONT_XS)
-        self.enc_char_count_lbl.pack(anchor="e", padx=AppTheme.PAD_SM, pady=(AppTheme.PAD_TINY, AppTheme.PAD_SM))
+        btn_row_input = ctk.CTkFrame(msg_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        btn_row_input.pack(fill="x", padx=AppTheme.PAD_SM, pady=(AppTheme.PAD_TINY, AppTheme.PAD_SM))
+        
+        btn_import = self.create_custom_button(
+            btn_row_input,
+            text="Buka File TXT",
+            command=lambda: self.import_txt_file(self.enc_msg_input, self.on_encrypt_text_change),
+            bg_color=AppTheme.BG_PRIMARY,
+            hover_bg=AppTheme.BORDER_COLOR,
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
+        )
+        btn_import.pack(side="left")
+        
+        self.enc_char_count_lbl = ctk.CTkLabel(btn_row_input, text="Karakter: 0", text_color=AppTheme.TEXT_MUTED, font=AppTheme.FONT_XS)
+        self.enc_char_count_lbl.pack(side="right")
         
         # 2. Output Ciphertext
         out_card = ctk.CTkFrame(left_col, fg_color=AppTheme.BG_CARD, border_color=AppTheme.BORDER_COLOR, border_width=1, corner_radius=AppTheme.CORNER_RADIUS_MD)
@@ -723,7 +737,8 @@ class E2EEApp:
             command=lambda: self.copy_to_clipboard(self.enc_msg_output.get("1.0", tk.END).strip(), btn_copy, "Salin Ciphertext"),
             bg_color=AppTheme.BG_PRIMARY,
             hover_bg=AppTheme.BORDER_COLOR,
-            font=AppTheme.FONT_SM_BOLD
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
         )
         btn_copy.pack(side="left", padx=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
         
@@ -733,9 +748,21 @@ class E2EEApp:
             command=self.clear_encrypt_message,
             bg_color=AppTheme.BG_PRIMARY,
             hover_bg=AppTheme.BORDER_COLOR,
-            font=AppTheme.FONT_SM_BOLD
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
         )
-        btn_clear.pack(side="left")
+        btn_clear.pack(side="left", padx=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        btn_save = self.create_custom_button(
+            btn_row,
+            text="Simpan File TXT",
+            command=lambda: self.export_txt_file(self.enc_msg_output, "encrypted_message.txt"),
+            bg_color=AppTheme.BG_PRIMARY,
+            hover_bg=AppTheme.BORDER_COLOR,
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
+        )
+        btn_save.pack(side="left")
         
         # KANAN: Penyatuan Kontrol Kunci & Metode ke dalam panel yang padu
         right_panel_card = ctk.CTkFrame(right_col, fg_color=AppTheme.BG_CARD, border_color=AppTheme.BORDER_COLOR, border_width=1, corner_radius=AppTheme.CORNER_RADIUS_MD)
@@ -745,8 +772,30 @@ class E2EEApp:
         key_section = ctk.CTkFrame(right_panel_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_section.pack(fill="x", padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
         
-        lbl_pub_tag = ctk.CTkLabel(key_section, text="Kunci Publik Penerima (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
-        lbl_pub_tag.pack(anchor="w", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        lbl_row = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        lbl_row.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_pub_tag = ctk.CTkLabel(lbl_row, text="Kunci Publik Penerima (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
+        lbl_pub_tag.pack(side="left")
+        
+        btn_help = ctk.CTkButton(
+            lbl_row,
+            text="?",
+            width=20,
+            height=20,
+            fg_color="transparent",
+            hover_color=AppTheme.BORDER_COLOR,
+            text_color=AppTheme.COLOR_TEAL,
+            font=AppTheme.FONT_XS_BOLD,
+            command=lambda: self.show_help_info(
+                "Info Kunci Publik",
+                "Kunci Publik (.pem) digunakan untuk MENGENKRIPSI data sehingga hanya penerima yang sah yang bisa membacanya.\n\n"
+                "• Kunci ini aman untuk dibagikan ke siapa saja.\n"
+                "• Mintalah kunci publik ini dari orang yang ingin Anda kirimi pesan."
+            ),
+            cursor="hand2"
+        )
+        btn_help.pack(side="left", padx=AppTheme.PAD_XS)
         
         key_row = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_row.pack(fill="x")
@@ -813,8 +862,28 @@ class E2EEApp:
         file_section = ctk.CTkFrame(left_panel_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
         file_section.pack(fill="x", padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
         
-        lbl_src_tag = ctk.CTkLabel(file_section, text="Pilih Berkas Sumber (File Asli):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
-        lbl_src_tag.pack(anchor="w", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        lbl_row_file = ctk.CTkFrame(file_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        lbl_row_file.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_src_tag = ctk.CTkLabel(lbl_row_file, text="Pilih Berkas Sumber (File Asli):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
+        lbl_src_tag.pack(side="left")
+        
+        btn_help_file = ctk.CTkButton(
+            lbl_row_file,
+            text="?",
+            width=20,
+            height=20,
+            fg_color="transparent",
+            hover_color=AppTheme.BORDER_COLOR,
+            text_color=AppTheme.COLOR_TEAL,
+            font=AppTheme.FONT_XS_BOLD,
+            command=lambda: self.show_help_info(
+                "Info Berkas Sumber",
+                "Pilih berkas/file jenis apa saja dari komputer Anda (seperti dokumen, gambar, PDF, zip) yang ingin Anda enkripsi secara aman."
+            ),
+            cursor="hand2"
+        )
+        btn_help_file.pack(side="left", padx=AppTheme.PAD_XS)
         
         file_row = ctk.CTkFrame(file_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
         file_row.pack(fill="x")
@@ -845,8 +914,28 @@ class E2EEApp:
         key_section = ctk.CTkFrame(left_panel_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_section.pack(fill="x", padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
         
-        lbl_pub_tag = ctk.CTkLabel(key_section, text="Kunci Publik Penerima (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
-        lbl_pub_tag.pack(anchor="w", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        lbl_row_key = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        lbl_row_key.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_pub_tag = ctk.CTkLabel(lbl_row_key, text="Kunci Publik Penerima (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
+        lbl_pub_tag.pack(side="left")
+        
+        btn_help_key = ctk.CTkButton(
+            lbl_row_key,
+            text="?",
+            width=20,
+            height=20,
+            fg_color="transparent",
+            hover_color=AppTheme.BORDER_COLOR,
+            text_color=AppTheme.COLOR_TEAL,
+            font=AppTheme.FONT_XS_BOLD,
+            command=lambda: self.show_help_info(
+                "Info Kunci Publik",
+                "Pilih berkas kunci publik (.pem) milik penerima berkas. Ini memastikan hanya penerima tersebut yang dapat membuka berkas yang terenkripsi."
+            ),
+            cursor="hand2"
+        )
+        btn_help_key.pack(side="left", padx=AppTheme.PAD_XS)
         
         key_row = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_row.pack(fill="x")
@@ -1217,8 +1306,22 @@ class E2EEApp:
         self.dec_msg_input.bind("<KeyRelease>", self.on_decrypt_text_change)
         self.set_placeholder(self.dec_msg_input, "Tempel ciphertext Base64 di sini...")
         
-        self.dec_char_count_lbl = ctk.CTkLabel(input_card, text="Karakter: 0", text_color=AppTheme.TEXT_MUTED, font=AppTheme.FONT_XS)
-        self.dec_char_count_lbl.pack(anchor="e", padx=AppTheme.PAD_SM, pady=(AppTheme.PAD_TINY, AppTheme.PAD_SM))
+        btn_row_input = ctk.CTkFrame(input_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        btn_row_input.pack(fill="x", padx=AppTheme.PAD_SM, pady=(AppTheme.PAD_TINY, AppTheme.PAD_SM))
+        
+        btn_import = self.create_custom_button(
+            btn_row_input,
+            text="Buka File TXT",
+            command=lambda: self.import_txt_file(self.dec_msg_input, self.on_decrypt_text_change),
+            bg_color=AppTheme.BG_PRIMARY,
+            hover_bg=AppTheme.BORDER_COLOR,
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
+        )
+        btn_import.pack(side="left")
+        
+        self.dec_char_count_lbl = ctk.CTkLabel(btn_row_input, text="Karakter: 0", text_color=AppTheme.TEXT_MUTED, font=AppTheme.FONT_XS)
+        self.dec_char_count_lbl.pack(side="right")
         
         # 2. Output Plaintext
         output_card = ctk.CTkFrame(left_col, fg_color=AppTheme.BG_CARD, border_color=AppTheme.BORDER_COLOR, border_width=1, corner_radius=AppTheme.CORNER_RADIUS_MD)
@@ -1241,7 +1344,8 @@ class E2EEApp:
             command=lambda: self.copy_to_clipboard(self.dec_msg_output.get("1.0", tk.END).strip(), btn_copy, "Salin Plaintext"),
             bg_color=AppTheme.BG_PRIMARY,
             hover_bg=AppTheme.BORDER_COLOR,
-            font=AppTheme.FONT_SM_BOLD
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
         )
         btn_copy.pack(side="left", padx=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
         
@@ -1251,9 +1355,21 @@ class E2EEApp:
             command=self.clear_decrypt_message,
             bg_color=AppTheme.BG_PRIMARY,
             hover_bg=AppTheme.BORDER_COLOR,
-            font=AppTheme.FONT_SM_BOLD
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
         )
-        btn_clear.pack(side="left")
+        btn_clear.pack(side="left", padx=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        btn_save = self.create_custom_button(
+            btn_row,
+            text="Simpan File TXT",
+            command=lambda: self.export_txt_file(self.dec_msg_output, "decrypted_message.txt"),
+            bg_color=AppTheme.BG_PRIMARY,
+            hover_bg=AppTheme.BORDER_COLOR,
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
+        )
+        btn_save.pack(side="left")
         
         # KANAN: Penyatuan Kontrol Kunci, Badge & Detail Komponen
         right_panel_card = ctk.CTkFrame(right_col, fg_color=AppTheme.BG_CARD, border_color=AppTheme.BORDER_COLOR, border_width=1, corner_radius=AppTheme.CORNER_RADIUS_MD)
@@ -1263,8 +1379,30 @@ class E2EEApp:
         key_section = ctk.CTkFrame(right_panel_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_section.pack(fill="x", padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
         
-        lbl_priv_tag = ctk.CTkLabel(key_section, text="Kunci Privat Anda (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
-        lbl_priv_tag.pack(anchor="w", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        lbl_row = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        lbl_row.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_priv_tag = ctk.CTkLabel(lbl_row, text="Kunci Privat Anda (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
+        lbl_priv_tag.pack(side="left")
+        
+        btn_help = ctk.CTkButton(
+            lbl_row,
+            text="?",
+            width=20,
+            height=20,
+            fg_color="transparent",
+            hover_color=AppTheme.BORDER_COLOR,
+            text_color=AppTheme.COLOR_TEAL,
+            font=AppTheme.FONT_XS_BOLD,
+            command=lambda: self.show_help_info(
+                "Info Kunci Privat",
+                "Kunci Privat (.pem) digunakan untuk MENDEKRIPSI data yang telah dikirimkan kepada Anda.\n\n"
+                "• JANGAN PERNAH membagikan file ini kepada siapa pun.\n"
+                "• Simpan file ini di tempat yang aman dan rahasia."
+            ),
+            cursor="hand2"
+        )
+        btn_help.pack(side="left", padx=AppTheme.PAD_XS)
         
         key_row = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_row.pack(fill="x")
@@ -1355,8 +1493,28 @@ class E2EEApp:
         file_section = ctk.CTkFrame(left_panel_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
         file_section.pack(fill="x", padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
         
-        lbl_src_tag = ctk.CTkLabel(file_section, text="Pilih Berkas Terenkripsi (.enc):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
-        lbl_src_tag.pack(anchor="w", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        lbl_row_file = ctk.CTkFrame(file_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        lbl_row_file.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_src_tag = ctk.CTkLabel(lbl_row_file, text="Pilih Berkas Terenkripsi (.enc):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
+        lbl_src_tag.pack(side="left")
+        
+        btn_help_file = ctk.CTkButton(
+            lbl_row_file,
+            text="?",
+            width=20,
+            height=20,
+            fg_color="transparent",
+            hover_color=AppTheme.BORDER_COLOR,
+            text_color=AppTheme.COLOR_TEAL,
+            font=AppTheme.FONT_XS_BOLD,
+            command=lambda: self.show_help_info(
+                "Info Berkas Terenkripsi",
+                "Pilih berkas terenkripsi dengan ekstensi (.enc) yang ingin Anda kembalikan ke berkas asli."
+            ),
+            cursor="hand2"
+        )
+        btn_help_file.pack(side="left", padx=AppTheme.PAD_XS)
         
         file_row = ctk.CTkFrame(file_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
         file_row.pack(fill="x")
@@ -1387,8 +1545,28 @@ class E2EEApp:
         key_section = ctk.CTkFrame(left_panel_card, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_section.pack(fill="x", padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
         
-        lbl_priv_tag = ctk.CTkLabel(key_section, text="Kunci Privat Anda (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
-        lbl_priv_tag.pack(anchor="w", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        lbl_row_key = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
+        lbl_row_key.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_priv_tag = ctk.CTkLabel(lbl_row_key, text="Kunci Privat Anda (.pem):", font=AppTheme.FONT_MD_BOLD, text_color=AppTheme.TEXT_MAIN)
+        lbl_priv_tag.pack(side="left")
+        
+        btn_help_key = ctk.CTkButton(
+            lbl_row_key,
+            text="?",
+            width=20,
+            height=20,
+            fg_color="transparent",
+            hover_color=AppTheme.BORDER_COLOR,
+            text_color=AppTheme.COLOR_TEAL,
+            font=AppTheme.FONT_XS_BOLD,
+            command=lambda: self.show_help_info(
+                "Info Kunci Privat",
+                "Pilih berkas kunci privat (.pem) Anda yang cocok dengan kunci publik yang digunakan untuk mengenkripsi berkas ini. Ini diperlukan untuk membuka dekripsi berkas."
+            ),
+            cursor="hand2"
+        )
+        btn_help_key.pack(side="left", padx=AppTheme.PAD_XS)
         
         key_row = ctk.CTkFrame(key_section, fg_color=AppTheme.BG_CARD, corner_radius=0)
         key_row.pack(fill="x")
@@ -1832,6 +2010,92 @@ class E2EEApp:
                     subprocess.Popen(["xdg-open", folder])
         except Exception as e:
             messagebox.showerror("Error", f"Gagal membuka folder: {e}")
+
+    def show_help_info(self, title, message):
+        """Menampilkan jendela informasi bantuan modern."""
+        dialog = ctk.CTkToplevel(self.root)
+        dialog.title(title)
+        dialog.geometry("420x240")
+        dialog.resizable(False, False)
+        dialog.transient(self.root) # Selalu di atas window utama
+        dialog.grab_set() # Blokir interaksi window utama
+        
+        # Center the dialog on root window
+        x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 210
+        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 120
+        dialog.geometry(f"+{x}+{y}")
+        
+        dialog.configure(fg_color=AppTheme.BG_PRIMARY)
+        
+        pad_frame = ctk.CTkFrame(dialog, fg_color=AppTheme.BG_PRIMARY, corner_radius=0)
+        pad_frame.pack(fill="both", expand=True, padx=AppTheme.PAD_SM, pady=AppTheme.PAD_SM)
+        
+        lbl_title = ctk.CTkLabel(pad_frame, text=title.upper(), text_color=AppTheme.COLOR_TEAL, font=AppTheme.FONT_LG, anchor="w")
+        lbl_title.pack(fill="x", pady=(AppTheme.PAD_NONE, AppTheme.PAD_XS))
+        
+        lbl_msg = ctk.CTkLabel(pad_frame, text=message, text_color=AppTheme.TEXT_MAIN, font=AppTheme.FONT_SM, justify="left", anchor="w", wraplength=380)
+        lbl_msg.pack(fill="both", expand=True, pady=(AppTheme.PAD_NONE, AppTheme.PAD_SM))
+        
+        btn_close = self.create_custom_button(
+            pad_frame,
+            text="TUTUP",
+            command=dialog.destroy,
+            bg_color=AppTheme.BG_PRIMARY,
+            hover_bg=AppTheme.BORDER_COLOR,
+            font=AppTheme.FONT_SM_BOLD,
+            height=32
+        )
+        btn_close.pack(anchor="e")
+
+    def import_txt_file(self, text_widget, on_change_callback):
+        """Membuka file dialog untuk memilih berkas .txt dan menampilkan isinya di input area."""
+        path = filedialog.askopenfilename(
+            title="Pilih File Teks (.txt)",
+            filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+        )
+        if not path:
+            return
+        try:
+            with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            text_widget.configure(state="normal")
+            text_widget.delete("1.0", tk.END)
+            text_widget.insert("1.0", content)
+            text_widget.configure(text_color=AppTheme.TEXT_MAIN)
+            if on_change_callback:
+                on_change_callback()
+            self.update_status(f"File {os.path.basename(path)} berhasil dimuat", "success")
+        except Exception as e:
+            messagebox.showerror("Error", f"Gagal membaca file: {e}")
+            self.update_status("Gagal memuat file", "error")
+
+    def export_txt_file(self, text_widget, suggested_filename):
+        """Menyimpan konten dari widget text ke dalam berkas .txt."""
+        content = text_widget.get("1.0", tk.END).strip()
+        if not content or content in (
+            "Hasil enkripsi (Base64) akan muncul di sini...",
+            "Hasil dekripsi akan muncul di sini...",
+            "Tempel atau ketik pesan di sini...",
+            "Tempel ciphertext Base64 di sini..."
+        ):
+            messagebox.showwarning("Peringatan", "Tidak ada konten valid untuk disimpan!")
+            return
+            
+        path = filedialog.asksaveasfilename(
+            title="Simpan File Sebagai",
+            initialfile=suggested_filename,
+            filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+        )
+        if not path:
+            return
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(content)
+            messagebox.showinfo("Sukses", f"Berhasil menyimpan file ke:\n{path}")
+            self.update_status("File berhasil disimpan", "success")
+        except Exception as e:
+            messagebox.showerror("Error", f"Gagal menyimpan file: {e}")
+            self.update_status("Gagal menyimpan file", "error")
 
     def on_encrypt_text_change(self, event=None):
         """Menghitung karakter pesan plaintext secara real-time."""
